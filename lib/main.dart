@@ -1,7 +1,7 @@
 import 'package:crud/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:crud/pages/main_page.dart';
+import 'package:crud/auth/main_page.dart';
 
 
 void main() async {

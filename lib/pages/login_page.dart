@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_constructors
+import 'package:crud/pages/esqueci_senha_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 Color azulPadrao =       const Color.fromRGBO(1, 15, 39, 1); // 1 para opacidade total
@@ -10,7 +13,8 @@ Color backgroundPadrao = const  Color.fromRGBO(175, 175, 175, 1);
 bool _showPassword = false;
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  final VoidCallback showRegisterPage;
+  const LoginPage({Key? key, required this.showRegisterPage}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -40,6 +44,19 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundPadrao,
+      appBar: AppBar(
+        backgroundColor: azulPadrao,
+        title: Center(
+          child: Text(
+            'IFaltou?',
+            style: GoogleFonts.robotoSlab(
+              fontWeight: FontWeight.bold,
+              fontSize: 20.0,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -78,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 15,),
+                SizedBox(height: 10,),
                 //SENHA
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 25.0),
@@ -109,6 +126,31 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
+                SizedBox(height: 5,),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context){
+                            return EsqueciSenhaPage();
+                          }));
+                        },
+                        child: Text(
+                          'Esqueci a senha',
+                          style: GoogleFonts.robotoSlab(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 10.0,
+                            color: azulPadrao,
+                            letterSpacing: 1.0,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 SizedBox(height: 25,),
                 //BOTAO DE LOGIN
                 Padding(
@@ -131,6 +173,22 @@ class _LoginPageState extends State<LoginPage> {
                             letterSpacing: 2.0,
                             ),
                         ),
+                      ),
+                    ),
+                  ),
+                ),
+                //SizedBox(height: 5.0,), //espacamento 
+                Center(            
+                  child: 
+                  GestureDetector(
+                    onTap: widget.showRegisterPage,
+                    child: Text(
+                      'cadastre-se',
+                      style:GoogleFonts.robotoSlab(
+                              color: azulPadrao, 
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12.0,
+                              letterSpacing: 2.0,
                       ),
                     ),
                   ),

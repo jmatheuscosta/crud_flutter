@@ -8,10 +8,8 @@ Color backgroundPadrao = const  Color.fromRGBO(175, 175, 175, 1);
 
 class HomePage extends StatefulWidget{
   const HomePage({ Key? key}) : super(key: key);
-
   @override
   State<HomePage> createState() => _HomePageState();
-
 }
 
 class _HomePageState extends State<HomePage> {
