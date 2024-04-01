@@ -1,9 +1,9 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart'; // Adicione esta linha para importar o pacote intl
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 Color azulPadrao = const Color.fromRGBO(1, 15, 39, 1); // 1 para opacidade total
 Color verdePadrao = const Color.fromRGBO(77, 167, 104, 1); // 1 para opacidade total
@@ -11,7 +11,7 @@ Color backgroundPadrao = const Color.fromRGBO(175, 175, 175, 1);
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback showLoginPage;
-  const RegisterPage({Key? key, required this.showLoginPage}) : super(key: key);
+  const RegisterPage({super.key, Key? Key, required this.showLoginPage});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -22,33 +22,56 @@ String? _selectedRole;
 
 class _RegisterPageState extends State<RegisterPage> {
   //text controllers
-  final _cpfController = TextEditingController();
-  final _nomeController = TextEditingController();
   final _emailController = TextEditingController();
-  final _telefoneController = TextEditingController();
   final _senhaController = TextEditingController();
   final _confirmasenhaController = TextEditingController();
+  final _nomeController = TextEditingController();
+  final _sobrenomeController = TextEditingController();
+  final _dataNascimentoController = TextEditingController();
+  final _telefoneController = TextEditingController();
+  
 
   @override
   void dispose() {
-    _cpfController.dispose();
-    _nomeController.dispose();
     _emailController.dispose();
-    _telefoneController.dispose();
     _senhaController.dispose();
     _confirmasenhaController.dispose();
+    _nomeController.dispose();
+    _sobrenomeController.dispose();
+    _dataNascimentoController.dispose();
+    _telefoneController.dispose();  
     super.dispose();
   }
 
   Future signUp() async {
     if (senhaConfirmada()) {
+      //cria usuario
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: _emailController.text.trim(),
-      password: _senhaController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _senhaController.text.trim(),
       );
+      
+      //adiciona dados do usuario
+      addDadosUsuario(
+        _nomeController.text.trim(), 
+        _sobrenomeController.text.trim(),  
+        _dataNascimentoController.text.trim(), 
+        _telefoneController.text.trim(),  
+        _emailController.text.trim(), 
+        );
     }
     // Aqui você pode usar o valor selecionado de _selectedRole conforme necessário
     print('Papel selecionado: $_selectedRole');
+  }
+
+  Future addDadosUsuario(String nome, String sobrenome, String dataNascimento, String telefone, String email) async {
+    await FirebaseFirestore.instance.collection('usuarios').add({
+      'nome': nome,
+      'sobrenome': sobrenome,
+      'data nascimento': dataNascimento,
+      'telefone': telefone,
+      'email': email,
+    });
   }
 
   bool senhaConfirmada() => _senhaController.text.trim() == _confirmasenhaController.text.trim();
@@ -59,76 +82,7 @@ class _RegisterPageState extends State<RegisterPage> {
       backgroundColor: backgroundPadrao,
       appBar: AppBar(
         backgroundColor: azulPadrao,
-        title: Center(
-          child: Text(
-            'IFaltou?',
-            style: GoogleFonts.robotoSlab(
-              fontWeight: FontWeight.bold,
-              fontSize: 20.0,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: widget.showLoginPage,
-            icon: Icon(
-              Icons.login,
-              color: Colors.white, // Defina a cor do ícone como branca
-            ),
-          ),
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            SizedBox(
-              height: 89,
-              child: DrawerHeader(
-                decoration: BoxDecoration(
-                  color: azulPadrao,
-                ),
-                child: Text(
-                  'Menu',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                  ),
-                ),
-              ),
-            ),
-            ListTile(
-              title: Text(
-                        'Item 1',
-                        style: GoogleFonts.robotoSlab(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 20.0,
-                          color: azulPadrao,
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-              onTap: () {
-                // Adicione aqui a lógica para lidar com o clique em Item 1 do Drawer
-              },
-            ),
-            ListTile(
-              title: Text(
-                        'Item 1',
-                        style: GoogleFonts.robotoSlab(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 20.0,
-                          color: azulPadrao,
-                          letterSpacing: 2.0,
-                        ),
-                      ),
-              onTap: () {
-                // Adicione aqui a lógica para lidar com o clique em Item 1 do Drawer
-              },
-            ),
-            // Adicione mais itens do Drawer conforme necessário
-          ],
-        ),
+        elevation: 0,
       ),
       body: SafeArea(
         child: Center(
@@ -141,12 +95,12 @@ class _RegisterPageState extends State<RegisterPage> {
                   size: 75,
                   color: azulPadrao,
                 ),
-                //LOGIN
+                //Cadastro
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 45.0),
                   child: Container(
                     child: Text(
-                      'Cadastro Usuario',
+                      'Cadastro',
                       style: GoogleFonts.robotoSlab(
                         fontWeight: FontWeight.w900,
                         fontSize: 20.0,
@@ -156,112 +110,134 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-                SizedBox(
+
+                const SizedBox(
+                  //espaçamento
                   height: 30,
-                ), //espaçamento
-                //tipo usuario
+                ),
+
+                //primeiro nome
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: ListTile(
-                    title: Text('Tipo de usuário'),
-                    trailing: DropdownButton<String>(
-                      value: _selectedRole,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedRole = value;
-                        });
-                      },
-                      dropdownColor: backgroundPadrao,
-                      items: <String>['Admin', 'Aluno', 'Professor']
-                          .map<DropdownMenuItem<String>>(
-                            (String value) => DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                ),
-                //CPF
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: azulPadrao),
-                    ),
-                    child: TextField(
-                      controller: _cpfController,
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                        hintText: 'Digite o CPF',
-                      ),
-                    ),
-                  ),
-                ),
-                //nome
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: azulPadrao),
                     ),
                     child: TextField(
                       controller: _nomeController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                        hintText: 'Digite o nome',
+                        hintText: 'Nome',
+                        fillColor: Color.fromRGBO(190, 190, 190, 1),
+                        filled: true,
                       ),
-                    ),
+                    ),       
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
-                //email
+                //Segundo Nome
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: azulPadrao),
                     ),
                     child: TextField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
+                      controller: _sobrenomeController,
+                      decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                        hintText: 'Digite o email',
+                        hintText: 'Sobrenome',
+                        fillColor: Color.fromRGBO(190, 190, 190, 1),
+                        filled: true,
                       ),
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
+                  height: 10,
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: azulPadrao),
+                    ),
+                    child: TextField(
+                      controller: _dataNascimentoController,
+                      readOnly: true,
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                        );
+                        if (pickedDate != null) {
+                          setState(() {
+                            _dataNascimentoController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
+                          });
+                        }
+                      },
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                        hintText: 'Data de Nascimento',
+                        fillColor: Color.fromRGBO(190, 190, 190, 1),
+                        filled: true,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
                   height: 10,
                 ),
                 //telefone
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: azulPadrao),
                     ),
                     child: TextField(
                       controller: _telefoneController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                        hintText: 'Digite o telefone',
+                        hintText: 'Telefone',
+                        fillColor: Color.fromRGBO(190, 190, 190, 1),
+                        filled: true,
                       ),
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
+                  height: 10,
+                ),
+                 //email
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: azulPadrao),
+                    ),
+                    child: TextField(
+                      controller: _emailController,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                        hintText: 'Email',
+                        fillColor: Color.fromRGBO(190, 190, 190, 1),
+                        filled: true,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
                   height: 10,
                 ),
                 //SENHA
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: azulPadrao),
@@ -272,9 +248,11 @@ class _RegisterPageState extends State<RegisterPage> {
                         TextField(
                           controller: _senhaController,
                           obscureText: !_showPassword,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                            hintText: 'Digite sua senha',
+                            hintText: 'Senha',
+                            fillColor: Color.fromRGBO(190, 190, 190, 1),
+                            filled: true,
                           ),
                         ),
                         IconButton(
@@ -289,10 +267,12 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10.0,),
-                //SENHA
+                const SizedBox(
+                  height: 10.0,
+                ),
+                //CONFIRMAÇÃO DE SENHA
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: azulPadrao),
@@ -303,23 +283,27 @@ class _RegisterPageState extends State<RegisterPage> {
                         TextField(
                           controller: _confirmasenhaController,
                           obscureText: !_showPassword ? true : false,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                             hintText: 'Confirme a senha',
+                            fillColor: Color.fromRGBO(190, 190, 190, 1),
+                            filled: true,
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: 25,),
-                //BOTAO DE LOGIN
+                const SizedBox(
+                  height: 25,
+                ),
+                //BOTAO DE CADASTRO
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 125.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 125.0),
                   child: GestureDetector(
                     onTap: signUp,
                     child: Container(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       decoration: BoxDecoration(
                         color: azulPadrao,
                         borderRadius: BorderRadius.circular(20.0),
@@ -334,6 +318,20 @@ class _RegisterPageState extends State<RegisterPage> {
                             letterSpacing: 2.0,
                           ),
                         ),
+                      ),
+                    ),
+                  ),
+                ),
+                Center(
+                  child: GestureDetector(
+                    onTap: widget.showLoginPage,
+                    child: Text(
+                      'entrar',
+                      style: GoogleFonts.robotoSlab(
+                        color: azulPadrao,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12.0,
+                        letterSpacing: 2.0,
                       ),
                     ),
                   ),

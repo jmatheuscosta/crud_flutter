@@ -29,7 +29,7 @@ class _EsqueciSenhaPageState extends State<EsqueciSenhaPage> {
       showDialog(
         context: context,
         builder: (context){
-          return AlertDialog(
+          return const AlertDialog(
             content: Text('Link para reset de senha enviado com sucesso!'),
           );
         },
@@ -47,15 +47,19 @@ class _EsqueciSenhaPageState extends State<EsqueciSenhaPage> {
     }
   }
 
-  @override
+  @override 
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundPadrao,
+      appBar: AppBar(
+        backgroundColor: azulPadrao,
+        elevation: 0,
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Digite seu email e mandaremos e mandaremos um link para resetar sua senha!',
+            'Digite seu email!',
             textAlign: TextAlign.center,
             style: GoogleFonts.robotoSlab(
                           fontWeight: FontWeight.w500,
@@ -64,26 +68,27 @@ class _EsqueciSenhaPageState extends State<EsqueciSenhaPage> {
                           letterSpacing: 1.0,
             ),
           ),
-          SizedBox(height: 15.0),
+          const SizedBox(height: 15.0),
           //email
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 25.0),
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: Container(
             decoration: BoxDecoration( 
                border: Border.all(color: azulPadrao), // Define a cor da borda ao redor do Container
             ),
             child: TextField(
             controller: _emailController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               contentPadding: EdgeInsets.symmetric(horizontal:16.0), // Preenchimento interno do TextField
               hintText: 'Digite seu email',
                 ),
               ),
             ),
           ),
-          SizedBox(height: 15.0),
+          const SizedBox(height: 15.0),
           MaterialButton(
             onPressed: resetarSenha,
+            color: azulPadrao,
             child: 
             Text(
               'Resetar Senha',
@@ -94,7 +99,6 @@ class _EsqueciSenhaPageState extends State<EsqueciSenhaPage> {
                 letterSpacing: 1.0,
               ),
             ),
-            color: azulPadrao,
           )
         ],
       ),

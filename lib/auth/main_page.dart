@@ -4,7 +4,7 @@ import 'package:crud/auth/auth_page.dart';
 import 'package:crud/pages/home_page.dart';
 
 class MainPage extends StatelessWidget{
-  const MainPage({Key? key}) : super(key: key);
+  const MainPage({super.key});
 
   @override
   Widget build(BuildContext context){
@@ -13,9 +13,9 @@ class MainPage extends StatelessWidget{
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot){
           if(snapshot.hasData){
-            return HomePage();
+            return const HomePage();
           }else {
-            return AuthPage();
+            return const AuthPage();
           }
         },
       ),

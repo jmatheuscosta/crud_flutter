@@ -1,9 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:crud/pages/esqueci_senha_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 Color azulPadrao =       const Color.fromRGBO(1, 15, 39, 1); // 1 para opacidade total
@@ -14,7 +12,7 @@ bool _showPassword = false;
 
 class LoginPage extends StatefulWidget {
   final VoidCallback showRegisterPage;
-  const LoginPage({Key? key, required this.showRegisterPage}) : super(key: key);
+  const LoginPage({super.key, required this.showRegisterPage});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -44,19 +42,6 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundPadrao,
-      appBar: AppBar(
-        backgroundColor: azulPadrao,
-        title: Center(
-          child: Text(
-            'IFaltou?',
-            style: GoogleFonts.robotoSlab(
-              fontWeight: FontWeight.bold,
-              fontSize: 20.0,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -70,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),  
                 //LOGIN
                 Text(
-                  'LOGIN',
+                  'Bem Vindo',
                   style: GoogleFonts.robotoSlab(
                     fontWeight: FontWeight.w900,
                     fontSize: 45,
@@ -91,6 +76,8 @@ class _LoginPageState extends State<LoginPage> {
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.symmetric(horizontal:16.0), // Preenchimento interno do TextField
                         hintText: 'Digite seu email',
+                        fillColor: Color.fromRGBO(190, 190, 190, 1),
+                        filled: true,
                       ),
                     ),
                   ),
@@ -111,7 +98,9 @@ class _LoginPageState extends State<LoginPage> {
                           obscureText: !_showPassword, // Mostra ou oculta o texto com base no valor de _showPassword
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.symmetric(horizontal: 16.0), // Preenchimento interno do TextField
-                            hintText: 'Digite sua senha', // Texto de dica dentro do TextField
+                            hintText: 'Digite sua senha',
+                            fillColor: Color.fromRGBO(190, 190, 190, 1),
+                            filled: true, // Texto de dica dentro do TextField
                           ),
                         ),
                         IconButton(
